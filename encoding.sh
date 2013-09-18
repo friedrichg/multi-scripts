@@ -2,9 +2,25 @@
 
 # create base64 encoded script
 base64script() {
-        base64opts=-di;[[ "$(uname)" == "Darwin" ]] && base64opts=-D;a="$(tail -n+1 $1|base64)" && echo $'#!/bin/bash\na="$(echo "'"$a"'"|base64 '"$base64opts"$')";eval "$a"' > encoded_$1.sh
+        [[ ! -f "$1" ]] && return
+        base64opts=-di;[[ "$(uname)" == "Darwin" ]] && base64opts=-D; new_name="$(dirname $1)/encoded_$(basename $1)";
+        a="$(tail -n+1 $1|base64)" 
+        echo $'#!/bin/bash\na="$(echo "'"$a"'"|base64 '"$base64opts"$')";eval "$a"' > $new_name
+        chmod +x $new_name
 }
 
-[[ $1 && $2 ]] && $1 $2
+# ciphers and encodes script
+bfscript() {
+        [[ ! -f "$1" ]] && return
+        base64opts=-di;[[ "$(uname)" == "Darwin" ]] && base64opts=-D; new_name="$(dirname $1)/bf_$(basename $1)";
+        a="$(tail -n+1 $1|openssl bf|base64)" 
+        echo $'#!/bin/bash\na="$(echo "'"$a"'"|base64 '"$base64opts"$'|openssl bf -d)";eval "$a"' > $new_name
+        chmod +x $new_name
+}
 
-# Example ./encoding base64script shadow.sh
+if [[ "$1" && "$2" ]]; then 
+   "$1" "$2"
+else
+   echo "Example $0 base64script shadow.sh"
+   echo "Example $0 bfscript shadow.sh"
+fi
