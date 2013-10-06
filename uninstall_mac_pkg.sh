@@ -14,7 +14,7 @@
 LOG=/var/log/uninstall.log
 
 #Verify the arguments
-if [[ $# -ne 1 ]]
+if [[ $# -lt 1 ]]
 then
  echo "Usage:"
  echo "$0 "
@@ -36,37 +36,51 @@ then
  exit 1
 else
  echo "Following package will be uninstalled:"
- pkgutil --info $1
- sudo pkgutil --info $1 >> $LOG
+ info="$(pkgutil --info $1)"
+ echo "$info"
+ echo "$info" >> $LOG
+ location="/$(echo "$info"|grep location|cut -c11-)"
+ echo "WARNING:: the location to remove files is: $location"
  echo "The files removed will be archived at /tmp/$1.tar"
 fi
 
-#Confirm UNINSTALLTION
-echo -n "Proceed with UNINSTALLTION [y/N]:"
-read ans
-if [[ $ans == 'y' || $ans == 'Y' ]]
-then
- echo "Uninstalling $1"
-else
- echo "Uninstalltion aborted!"
- exit 0;
-fi
+#Confirm UNINSTALLATION
+function confirm(){
+	echo -n "Proceed with this? [a/y/N]:"
+	read ans
+        if [[ $ans == 'a' ]]; then
+           echo "Uninstalling all"
+           return 1
+        elif [[ $ans == 'y' || $ans == 'Y' ]]
+	then
+	 echo "Uninstalling $1"
+           return 0
+	else
+	 echo "Uninstallation aborted!"
+	 exit 0;
+	fi
+}
+
+confirm
 
 #Do it from root
-cd /
+cd "$location"
 
 #Generating the list of files
-FILES=$(pkgutil --only-files --files $1 | tr '\n' ' ' )
-sudo echo $FILES >> $LOG
+FILES=$(pkgutil --only-files --files $1)
+echo $FILES >> $LOG
 
 #Generating the list of directories
-DIRS=$(pkgutil --only-dirs --files $1 | tr '\n' ' ')
-sudo echo $DIRS >> $LOG
+DIRS=$(pkgutil --only-dirs --files $1)
+echo $DIRS >> $LOG
 
 #Archive  all the files
 echo "Creating archive at /tmp/$1.tar ..."
-tar -cf /tmp/$1.tar  $FILES
+echo "$FILES"| tar -cf /tmp/$1.tar -T -
 
+echo "This files are in backup:"
+tar -tvf /tmp/$1.tar
+all=0
 echo "Deleting files ..."
 for file in $FILES
 do
@@ -74,10 +88,15 @@ do
  then
   echo "$file is used by another package and not removing!"
  else
-  sudo rm -f $file
+  echo rm -vf "$file"
+  if [[ "$all" -eq 0 ]]; then
+     confirm
+     all=$?
+  fi
+  rm -vf "$file" 1>$LOG 2>&1
  fi
 done
-
+all=0
 echo "Deleting dirs ..."
 for dir in $DIRS
 do
@@ -85,10 +104,15 @@ do
  then
   echo "$dir is used by another package and mot removing!"
  else
-  sudo rm -fr $dir
+  echo rm -vfr "$dir"
+  if [[ "$all" -eq 0 ]]; then
+     confirm
+     all=$?
+  fi
+  rm -vfr "$dir" 1>$LOG 2>&1
  fi
 done
 
 #Forgetting the package from pkg database
 echo "Forgetting the package $1..."
-sudo pkgutil --forget $1
+echo pkgutil --forget $1
