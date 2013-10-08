@@ -82,9 +82,13 @@ echo "This files are in backup:"
 tar -tvf /tmp/$1.tar
 all=0
 echo "Deleting files ..."
+IFS=$'\n'
 for file in $FILES
 do
- if [[ $(pkgutil --file-info $file | grep pkgid | wc -l) -ne 1 ]]
+ #pkgutil --file-info "$file"
+ #pkgid="$(pkgutil --file-info "$file"|grep pkgid)"
+ #echo "pkgid=$pkgid"
+ if [[ $(pkgutil --file-info "$file" | grep pkgid | wc -l) -ne 1 ]]
  then
   echo "$file is used by another package and not removing!"
  else
