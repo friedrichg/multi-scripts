@@ -1,9 +1,9 @@
 #curl equivalent
-(New-Object System.Net.WebClient).DownloadString("http://blog.commandlinekungfu.com")
+(New-Object System.Net.WebClient).DownloadString("http://www.google.com")
 
 #wget equivalent
 (New-Object System.Net.WebClient).DownloadFile(
-"http://blog.commandlinekungfu.com","c:\downloadedfile.html")
+"http://www.google.com","c:\google.html")
 
 #(Windows Vista or Windows 7)
 #Install telnet client or Server
