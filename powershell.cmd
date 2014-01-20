@@ -18,5 +18,6 @@ start /w pkgmgr /uu:"TelnetServer"
 #start HolaMundo.ps1 --> WRONG!!!
 #powershell ./Test.ps1 --> WRONG!!!
 powershell "powershell $(cat Test.ps1)"
-powershell "$(gc Test.ps1)"
+powershell "cat Test.ps1|iex"
+powershell "$(cat Test.ps1)"
 powershell -ExecutionPolicy Bypass ./Test.ps1
