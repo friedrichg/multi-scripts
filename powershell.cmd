@@ -15,9 +15,10 @@ start /w pkgmgr /uu:"TelnetClient"
 start /w pkgmgr /uu:"TelnetServer"
 
 #  Start powershell script
-# start HolaMundo.ps1 --> WRONG!!!
+# start Test.ps1 --> WRONG!!!
 # powershell ./Test.ps1 --> WRONG!!!
-# powershell "& ./HolaMundo.ps1" --> WRONG!!
+# powershell "& ./Test.ps1" --> WRONG!!!
+# powershell ". ./Test.ps1" --> WRONG!!!
 powershell "powershell $(cat Test.ps1)"
 powershell "cat Test.ps1|iex"
 powershell "$(cat Test.ps1)"
