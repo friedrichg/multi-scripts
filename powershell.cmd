@@ -23,3 +23,6 @@ powershell "powershell $(cat Test.ps1)"
 powershell "cat Test.ps1|iex"
 powershell "$(cat Test.ps1)"
 powershell -ExecutionPolicy Bypass ./Test.ps1
+
+# PS Version
+[Environment]::Version
