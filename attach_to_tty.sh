@@ -18,3 +18,5 @@ detach
 quit
 HEREDOC
 }
+#Show stdin and stdout
+strace -e write=1,2 -e trace=write -p 22201
