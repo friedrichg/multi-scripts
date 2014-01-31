@@ -18,6 +18,10 @@ bfscript() {
         chmod +x $new_name
 }
 
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
+alias urldecode='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1])"'
+
+
 if [[ "$1" && "$2" ]]; then 
    "$1" "$2"
 else
