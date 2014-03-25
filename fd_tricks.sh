@@ -21,7 +21,7 @@ HEREDOC
 #Show stdin and stdout
 strace -e write=1,2 -e trace=write -p 22201
 
-function move_log((){
+function move_log() {
   pid="$1"
   old="$1"
   new="$2"
@@ -32,3 +32,5 @@ function move_log((){
   close($oldfd)
 detach
 HEREDOC
+}
+
