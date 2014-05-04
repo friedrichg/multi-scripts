@@ -26,3 +26,9 @@ powershell -ExecutionPolicy Bypass ./Test.ps1
 
 # PS Version
 [Environment]::Version
+
+# ps
+Get-Process
+
+# get ipaddress
+[System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties().GetActiveTcpListeners()
