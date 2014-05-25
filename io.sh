@@ -13,3 +13,5 @@ sed 's|cat -v /proc/\([0-9]*\)/cmdline |\n\1|g; s|\^@| |g; s|   *| |g; $a\'|\
 sed /^$/d
 
 
+#intercept stdout/stderr of another process
+strace -ff -e trace=write -e write=1,2 -p SOME_PID
